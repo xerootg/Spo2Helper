@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">Spo2Helper Watch</string>
+    <string name="app_name">Spo2 Helper</string>
+    <string name="measure_now">Spot check now</string>
+    <string name="grant_permissions">Grant permissions</string>
+    <string name="state_idle">Ready. Trigger from the phone or tap below.</string>
+    <string name="state_measuring">Measuring… keep still</string>
+    <string name="state_reading_spo2">Reading sleep SpO2…</string>
+    <string name="state_sending">Sending to phone…</string>
+    <string name="heart_rate_fmt">%1$d bpm</string>
+    <string name="heart_rate_unavailable">Heart rate unavailable</string>
+    <string name="spo2_est_fmt">SpO2 ≈ %1$.0f%%</string>
+    <string name="spo2_est_unavailable">No SpO2 estimate</string>
+    <string name="spo2_sleep_fmt">Last sleep: %1$.0f%%</string>
+    <string name="spo2_hint">Estimate from the raw optical sensor. Not a medical device; calibrate from the phone app.</string>
+    <string name="perm_missing">Sensor permission needed. Open the app on the watch and grant it.</string>
+    <string name="channel_measure">Spot checks</string>
+    <string name="notif_measuring">Spot check in progress</string>
+    <string name="notif_done_title">Spot check done</string>
 </resources>

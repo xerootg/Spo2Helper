@@ -1,0 +1,27 @@
+// Release signing shared by :mobile and :wear.
+//
+// The phone and watch APKs must be signed with the SAME key or the Wearable Data
+// Layer will not deliver messages between them. In CI the key comes from the
+// KEYSTORE_FILE / KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD environment
+// variables. When they are absent (local builds, forks without secrets) the
+// release build falls back to the debug keystore so the APK is still installable.
+android {
+    signingConfigs {
+        release {
+            def ksPath = System.getenv("KEYSTORE_FILE")
+            if (ksPath != null && file(ksPath).exists()) {
+                storeFile file(ksPath)
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            } else {
+                initWith signingConfigs.debug
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}

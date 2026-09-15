@@ -1,95 +1,117 @@
-# Spo2 Helper
+# Spo2 Helper (Pixel Watch edition)
 
 ![Logo](https://raw.githubusercontent.com/Flyfish233/Spo2Helper/main/screenshot/ic_launcher_round.png)
 
-[English](https://github.com/Flyfish233/Spo2Helper#english)
+A phone-plus-watch pair of apps for Google Pixel Watch (target: Pixel Watch 5, Wear OS 7).
+The phone asks the watch for an **on-demand SpO2 spot check**, once or every N minutes. The
+watch reads its raw optical (PPG) sensor for about 20 seconds, computes blood oxygen from the red
+and infrared channels, adds a Health Services heart rate and last night's Google Health SpO2 for
+comparison, and sends everything to the phone.
 
-### 三星手表血氧监控助手。
+This is a rewrite of the original Samsung Galaxy Watch tool by
+[Flyfish233](https://github.com/Flyfish233/Spo2Helper), which worked by remotely launching Samsung
+Health's hidden SpO2 measurement screen. Pixel Watch has no such screen, so the approach changed.
 
-## 用途
+## How on-demand SpO2 works on a Pixel Watch
 
-此 App 可以自动唤起或远控三星手表 (Galaxy Watch 4+) 上的血氧测试程序，达到半自动化的血氧测试效果。
+- Google Health (formerly Fitbit) measures SpO2 **only during sleep** and offers no way to start a
+  reading. Health Services has no SpO2 data type either (only heart rate is available on demand).
+- The optical hardware is, however, exposed to any app through the ordinary Android
+  `SensorManager` as a vendor sensor named **"AFE4950 PPG Sensor"** (a Texas Instruments optical
+  front end). Each sample carries 16 values, one per LED/photodiode time slot; on Pixel Watch 3
+  twelve of them are live.
+- Google does not document which slot is red and which is infrared. The watch app therefore
+  analyses every channel (DC level, pulse amplitude, perfusion index, dominant frequency, SNR),
+  guesses red/IR from the usual ordering of perfusion (red < infrared < green), and computes
 
-受三星局限性影响（请见下文），启动 Activity 进行测试。使用此程序时可能经常出现测试失败的问题，因此 App 仅供用户在卧床或者坐下办公时才有更好的效果。
+  ```
+  R    = (AC_red / DC_red) / (AC_ir / DC_ir)
+  SpO2 = a - b * R          (a = 110, b = 25 until you calibrate)
+  ```
 
-安装手机和手表端。不需要预先打开手表端，只需确保手机已经蓝牙连接手表（或通过 Google Cloud Sync）
+- The phone shows the per-channel table so you can override the red/IR assignment, and it does a
+  one-point calibration against a fingertip pulse oximeter. Until you do that, treat the number
+  as an uncalibrated estimate. This is not a medical device.
 
-- 点击手机上的血氧测试按钮。手表将会立即开始测量血氧，适用于远程控制和监视。
+The estimator is pure Kotlin with JVM unit tests (`wear/src/test`).
 
-- 输入时长并进行血氧监测。您的手机将每隔一段时间发送一次血氧测试。默认为 10 分钟。
+## Install
 
-  ###### 您需要在三星健康 App 中查看测量好的血氧。
+Both APKs must be signed with the same key and share the application ID, otherwise the Wearable
+Data Layer will not deliver messages between them.
 
-## 截图
+```bash
+./gradlew assembleDebug
+adb -s <phone-serial> install mobile/build/outputs/apk/debug/mobile-debug.apk
+adb -s <watch-serial> install wear/build/outputs/apk/debug/wear-debug.apk
+```
 
-![CN](https://raw.githubusercontent.com/Flyfish233/Spo2Helper/main/screenshot/studio64.png)
+Requirements: phone on Android 14+, watch on Wear OS 5+ (Wear OS 6+ for on-watch Health Connect),
+JDK 17+ and Android SDK platform 36 with extension level 19 to build.
 
+## First run
 
-## 方法
+1. **Watch**: open Spo2 Helper once and grant the permissions it asks for (body sensors / heart rate,
+   notifications, and blood-oxygen read access on Wear OS 6+). The raw PPG sensor needs the same
+   body-sensor permission.
+2. **Phone**: open Spo2 Helper, allow notifications. Optionally tap *Grant Health Connect access* to
+   also see the sleep SpO2 that Google Health syncs to the phone.
+3. In Google Health, make sure the app is connected to Health Connect so SpO2 records are written.
 
-![Method](https://github.com/Flyfish233/Spo2Helper/blob/main/screenshot/Start.svg)
+## Use
 
-## 限制
+- **Spot check now**: sends a message to every connected watch. The watch captures the PPG sensor
+  for the configured number of seconds while Health Services measures heart rate, estimates SpO2,
+  reads the newest sleep SpO2 record from Health Connect, and sends the result back. The phone
+  stores it, shows it on screen and posts a notification.
+- **Start monitoring**: a foreground service on the phone repeats the spot check at the interval
+  you enter (default 10 minutes) until you stop it.
+- **PPG channels and calibration** (phone): after a spot check, the table lists each sensor slot.
+  Bold rows carry a heartbeat. Choose the red and infrared slot indices if the automatic guess is
+  wrong, adjust the `a`/`b` constants or capture length, enter a reference SpO2 from a real
+  oximeter and tap *Calibrate*, then *Send to watch*.
+- The last raw capture is saved on the watch as `files/ppg-last.csv` for offline analysis:
 
-受三星和 GDPR 等隐私政策影响，普通软件不得调用和查看这些传感器的敏感数据，只有受审查的医疗健康开发团队可以进行申请一个私有的 SDK，借此获取传感器数据。查看 [Samsung Health Privileged SDK](https://developer.samsung.com/health/privileged)。
+  ```bash
+  adb -s <watch-serial> shell run-as com.flyfish233.spo2helper cat files/ppg-last.csv > ppg.csv
+  ```
 
-该 SDK 并未公开发布，且需要额外的 API 和 Key 才可以被使用，例如使用该 API 的 [Samsung Health Monitor](https://www.samsung.com/hk/apps/samsung-health-monitor/)。
+  (`run-as` works for debug builds.)
 
-因此，我们只能调用血氧测试的 Activity 间接获取数据。
+## Builds and releases
 
-## 致谢
+GitHub Actions (`.github/workflows/android.yml`) runs the unit tests and lint on every push and
+pull request, builds release APKs for phone and watch, and uploads them as the `spo2helper-apks`
+artifact. Pushing a tag like `v3.0.0` also publishes them on a GitHub release.
 
-代码写的非常烂，能跑就行。用脚写的，所以很对不起，写于 Omicron 阳性期间
+Both APKs are signed with the same key, which the Data Layer requires. Without signing secrets
+the release build falls back to the debug keystore, so CI APKs are installable but the key changes
+whenever the runner's keystore does; uninstall before installing a new build. For a stable key,
+add these repository secrets: `KEYSTORE_BASE64` (base64 of a `.jks`), `KEYSTORE_PASSWORD`,
+`KEY_ALIAS`, `KEY_PASSWORD`. Locally the same values can be given as environment variables, with
+`KEYSTORE_FILE` pointing at the keystore.
 
-**图标来源：**
+## How it works
 
-[木子家的小团子](https://www.iconfont.cn/user/detail?uid=5049874&nid=fZ6DpMNcJqzs)
+```
+phone MainActivity / MonitorService
+    -- MessageClient "/spo2/measure" -->  watch WatchListenerService
+                                              -> MeasureService (foreground, type health)
+                                                   SensorManager "AFE4950 PPG Sensor" -> Spo2Estimator
+                                                   Health Services MeasureClient: HEART_RATE_BPM
+                                                   Health Connect: latest OxygenSaturationRecord
+    -- MessageClient "/spo2/config" -->   Spo2Config (red/IR slots, a, b, capture seconds)
+    <-- MessageClient "/spo2/result" ---  Reading as JSON
+phone PhoneListenerService -> ReadingStore + notification -> MainActivity
+```
 
-**软件基于此通信组件运行：**
+Modules:
 
-[Wear Msger](https://github.com/ichenhe/Wear-Msger)
-
-## English
-
-### A simple tool for monitoring blood oxygen with Samsung Galaxy Watch.
-
-## Usage
-
-It automatically launches the blood oxygen test app on the Samsung Galaxy Watch (4+) for a semi-automated blood oxygen test.
-
-Due to Samsung limitations (see below), there may be frequent test failures when using this app, so the app is only intended to work better when the user is in bed or sitting down.
-
-​			Install phone and watch apks. There is no need to pre-open the watch app, just make sure the phone is connected to the watch via Bluetooth (or via Google Cloud Sync)
-
-- Click the **Send Spo2 Test** button on the phone. The watch will immediately start measuring blood oxygen, suitable for remote control and monitoring.
-
-- Enter the duration and perform blood oxygen monitoring. Your phone will send blood oxygen tests at regular intervals. Default is 10 minutes.
-
-  ###### View the measured blood oxygen in the Samsung Health App.
-
-## Screenshot
-
-![EN](https://raw.githubusercontent.com/Flyfish233/Spo2Helper/main/screenshot/studio64en.png)
-
-
-## Method
-
-![Method](https://github.com/Flyfish233/Spo2Helper/blob/main/screenshot/Start.svg)
-
-## Limitations
-
-Due to privacy policies such as GDPR, Developers is not allowed to view sensitive data from these Samsung sensors, and only vetted healthcare teams can apply for a private SDK to access sensor data. View [Samsung Health Privileged SDK](https://developer.samsung.com/health/privileged).
-
-So we can only run activity for testing. 
+- `shared` — message paths, the `Reading` model, Health Connect reader, Data Layer wrapper.
+- `mobile` — phone app (Jetpack Compose, Material 3).
+- `wear` — watch app (Compose for Wear OS, raw PPG capture, SpO2 estimator, Health Services).
 
 ## Acknowledgements
 
-The code is shitty and Can Run Just Fine.
-
-**Icon by:**
-
-[木子家的小团子](https://www.iconfont.cn/user/detail?uid=5049874&nid=fZ6DpMNcJqzs)
-
-**Based on:**
-
-[Wear Msger](https://github.com/ichenhe/Wear-Msger)
+Original idea and icon from the Samsung version by Flyfish233. Icon by
+[木子家的小团子](https://www.iconfont.cn/user/detail?uid=5049874&nid=fZ6DpMNcJqzs).

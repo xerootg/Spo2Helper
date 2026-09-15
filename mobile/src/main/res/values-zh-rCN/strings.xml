@@ -1,12 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">血氧助手</string>
-    <string name="monitor_service_title">血氧监测服务</string>
-    <string name="monitor_service_text">正在监测血氧。您可以关掉此通知，不影响使用</string>
-    <string name="monitor_service_info">血氧监测服务 - 觉得烦可以关闭</string>
-    <string name="sendtest">发送血氧测试</string>
-    <string name="main_info_watch">请确认三星穿戴在后台运行，\n并且显示电量百分比和剩余时间。\n手表端只需要安装就可以了。\n需要开启息屏提醒才能自动监测。\n\n若需要短时间测试，\n请将自动息屏调整为 15 秒，\n显示最后使用调整为 20 秒。\n\n若手机需要播放音乐，\n最好关闭”显示媒体控件“。</string>
+    <string name="latest_title">手表最近一次检测</string>
+    <string name="no_readings">尚无数据。点击“立即检测”或开启持续监测。</string>
+    <string name="spo2_est_fmt">血氧 ≈ %1$.0f%%</string>
+    <string name="spo2_est_unavailable">无血氧估算值</string>
+    <string name="spo2_est_caption">由原始光学传感器实时估算（R = %1$.2f，通道 %2$d/%3$d）。非医疗测量。</string>
+    <string name="heart_rate_fmt">心率：%1$d 次/分</string>
+    <string name="heart_rate_ppg_fmt">PPG 脉率：%1$d 次/分</string>
+    <string name="heart_rate_unavailable">心率：无法读取</string>
+    <string name="spo2_sleep_fmt">最近睡眠血氧：%1$.0f%%（记录于 %2$s）</string>
+    <string name="spo2_sleep_unavailable">最近睡眠血氧：手表的 Health Connect 中没有数据</string>
+    <string name="measured_at_fmt">检测时间 %1$s</string>
+    <string name="sensor_fmt">传感器：%1$s，%2$.0f Hz</string>
+    <string name="send_test">立即检测</string>
+    <string name="sent_fmt">已发送到 %1$d 台手表</string>
+    <string name="no_watch">未连接手表。请检查蓝牙和 Pixel Watch 应用。</string>
+    <string name="interval_label">间隔时长（分）</string>
     <string name="enable_service">开启持续监测</string>
-    <string name="info_per">间隔时长(分)</string>
-    <string name="disable_service">关闭监测服务</string>
+    <string name="disable_service">关闭持续监测</string>
+    <string name="monitor_running">持续监测运行中</string>
+    <string name="channels_title">PPG 通道与校准</string>
+    <string name="channels_hint">每行是光学传感器的一个时隙。有脉搏的行带有心跳信号。红光的灌注指数 (PI) 应低于红外。可在下方设置通道序号，-1 表示自动。用指夹式血氧仪取得参考值后，输入并点击“校准”。</string>
+    <string name="channels_header">通道 · DC · AC · PI% · Hz · SNR</string>
+    <string name="channel_row_fmt">%1$d · %2$.0f · %3$.0f · %4$.2f%% · %5$.2f · %6$.0f</string>
+    <string name="red_channel">红光通道</string>
+    <string name="ir_channel">红外通道</string>
+    <string name="coef_a">a</string>
+    <string name="coef_b">b</string>
+    <string name="capture_seconds">采集秒数</string>
+    <string name="reference_spo2">参考血氧 %</string>
+    <string name="calibrate">校准</string>
+    <string name="send_config">发送到手表</string>
+    <string name="config_sent">配置已发送</string>
+    <string name="calibrated_fmt">已校准：a = %1$.1f（b = %2$.1f）</string>
+    <string name="phone_hc_title">本机 Health Connect 中的睡眠血氧</string>
+    <string name="phone_hc_missing">本机没有 Health Connect。</string>
+    <string name="phone_hc_grant">授予 Health Connect 权限</string>
+    <string name="phone_hc_value_fmt">%1$.0f%%，记录于 %2$s</string>
+    <string name="phone_hc_empty">最近 7 天没有血氧记录。请将 Google Health 连接到 Health Connect 并同步。</string>
+    <string name="limitation">Google Health 仅在睡眠时测量血氧，且没有提供发起测量的接口。本应用直接读取手表的原始光学传感器，并由红光和红外通道计算血氧。Google 未公开通道含义，请先核对通道分配并用真实血氧仪校准，再信任数值。</string>
+    <string name="monitor_service_title">血氧助手监测服务</string>
+    <string name="monitor_service_text_fmt">每 %1$d 分钟请求手表检测一次</string>
+    <string name="channel_monitor">监测服务</string>
+    <string name="channel_results">检测结果</string>
+    <string name="result_notif_title">来自手表的检测结果</string>
+    <string name="result_hr_short_fmt">%1$d 次/分</string>
+    <string name="result_spo2_short_fmt">血氧 ≈ %1$.0f%%</string>
 </resources>

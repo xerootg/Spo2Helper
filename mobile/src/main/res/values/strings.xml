@@ -1,12 +1,49 @@
 <resources>
     <string name="app_name">Spo2 Helper</string>
-    <string name="monitor_service_title">Spo2 Service</string>
-    <string name="monitor_service_text">"Monitoring Spo2."</string>
-    <string name="monitor_service_info">Spo2 Monitor Service - Disable as your like</string>
-    <string name="sendtest">Send Spo2 Test</string>
-    <string name="main_info_watch">Please make sure Galaxy Wearable\nis running in the background.\nAnd it shows the watch power percentage on the main menu.\nThe watch side is only to be installed. No need to open it.\nIt would be best if you turned on Always On.\n\nIf you need to test for a short time:\nPlease adjust the Screen Turn Off to 15 seconds and\nAdjust Show Last App to 20 seconds.\n\nIf the phone needs to play music\nIt is better to turn off Media Controls.</string>
-    <string name="enable_service">Enable Monitor Service</string>
-    <string name="info_per">Duration / Test Per Minute</string>
-    <string name="disable_service">Disable Monitor Service</string>
-    <string name="default_pause" translatable="false">10</string>
+    <string name="latest_title">Latest spot check from watch</string>
+    <string name="no_readings">No readings yet. Tap "Spot check now" or start monitoring.</string>
+    <string name="spo2_est_fmt">SpO2 ≈ %1$.0f%%</string>
+    <string name="spo2_est_unavailable">No SpO2 estimate</string>
+    <string name="spo2_est_caption">Live estimate from the raw optical sensor (R = %1$.2f, channels %2$d/%3$d). Not a medical measurement.</string>
+    <string name="heart_rate_fmt">Heart rate: %1$d bpm</string>
+    <string name="heart_rate_ppg_fmt">Pulse from PPG: %1$d bpm</string>
+    <string name="heart_rate_unavailable">Heart rate: unavailable</string>
+    <string name="spo2_sleep_fmt">Last sleep SpO2: %1$.0f%% (recorded %2$s)</string>
+    <string name="spo2_sleep_unavailable">Last sleep SpO2: nothing in Health Connect on the watch</string>
+    <string name="measured_at_fmt">Measured %1$s</string>
+    <string name="sensor_fmt">Sensor: %1$s at %2$.0f Hz</string>
+    <string name="send_test">Spot check now</string>
+    <string name="sent_fmt">Sent to %1$d watch(es)</string>
+    <string name="no_watch">No watch connected. Check Bluetooth and the Pixel Watch app.</string>
+    <string name="interval_label">Interval (minutes)</string>
+    <string name="enable_service">Start monitoring</string>
+    <string name="disable_service">Stop monitoring</string>
+    <string name="monitor_running">Monitoring is running</string>
+    <string name="channels_title">PPG channels and calibration</string>
+    <string name="channels_hint">Each row is one slot of the optical sensor. Pulsatile rows carry a heartbeat. Red should have a lower perfusion (PI) than infrared. Set the indices below or leave -1 for automatic. After a reference reading from a fingertip oximeter, enter it and tap Calibrate.</string>
+    <string name="channels_header">ch · DC · AC · PI% · Hz · SNR</string>
+    <string name="channel_row_fmt">%1$d · %2$.0f · %3$.0f · %4$.2f%% · %5$.2f · %6$.0f</string>
+    <string name="red_channel">Red ch</string>
+    <string name="ir_channel">IR ch</string>
+    <string name="coef_a">a</string>
+    <string name="coef_b">b</string>
+    <string name="capture_seconds">Capture s</string>
+    <string name="reference_spo2">Reference SpO2 %</string>
+    <string name="calibrate">Calibrate</string>
+    <string name="send_config">Send to watch</string>
+    <string name="config_sent">Configuration sent</string>
+    <string name="calibrated_fmt">Calibrated: a = %1$.1f (b = %2$.1f)</string>
+    <string name="phone_hc_title">Sleep SpO2 on this phone (Health Connect)</string>
+    <string name="phone_hc_missing">Health Connect is not available on this phone.</string>
+    <string name="phone_hc_grant">Grant Health Connect access</string>
+    <string name="phone_hc_value_fmt">%1$.0f%% recorded %2$s</string>
+    <string name="phone_hc_empty">No SpO2 records in the last 7 days. Connect Google Health to Health Connect and sync.</string>
+    <string name="limitation">Google Health only measures SpO2 during sleep and offers no API to start a reading. This app reads the watch\'s raw optical sensor directly and computes SpO2 from the red and infrared channels. Which channel is which is not documented by Google, so verify the assignment and calibrate against a real pulse oximeter before trusting the numbers.</string>
+    <string name="monitor_service_title">Spo2 Helper monitoring</string>
+    <string name="monitor_service_text_fmt">Asking the watch for a spot check every %1$d min</string>
+    <string name="channel_monitor">Monitoring service</string>
+    <string name="channel_results">Spot check results</string>
+    <string name="result_notif_title">Spot check from watch</string>
+    <string name="result_hr_short_fmt">%1$d bpm</string>
+    <string name="result_spo2_short_fmt">SpO2 ≈ %1$.0f%%</string>
 </resources>

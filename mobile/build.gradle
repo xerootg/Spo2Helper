@@ -1,18 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 android {
     namespace 'com.flyfish233.spo2helper'
-    compileSdk 33
+    compileSdk 36
+    compileSdkExtension 19
 
     defaultConfig {
         applicationId "com.flyfish233.spo2helper"
-        minSdk 28
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        minSdk 34
+        targetSdk 36
+        versionCode 3
+        versionName "3.0"
     }
 
     buildTypes {
@@ -23,23 +25,27 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
-    lint {
-        baseline file('lint-baseline.xml')
+    buildFeatures {
+        compose true
     }
 }
 
+apply from: rootProject.file('gradle/signing.gradle')
+
 dependencies {
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    wearApp project(":wear")
-    implementation 'me.chenhe:wearmsger:2.1.0'
-    implementation 'com.google.android.gms:play-services-wearable:18.0.0'
+    implementation project(':shared')
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.activity:activity-compose:1.12.4'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.9.4'
+    implementation platform('androidx.compose:compose-bom:2025.12.01')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material3:material3'
+    debugImplementation 'androidx.compose.ui:ui-tooling-preview'
 }

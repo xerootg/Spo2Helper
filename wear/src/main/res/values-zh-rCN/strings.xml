@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">血氧助手 手表端</string>
+    <string name="app_name">血氧助手</string>
+    <string name="measure_now">立即检测</string>
+    <string name="grant_permissions">授予权限</string>
+    <string name="state_idle">就绪。可从手机触发或点击下方按钮。</string>
+    <string name="state_measuring">正在测量… 请保持静止</string>
+    <string name="state_reading_spo2">正在读取睡眠血氧…</string>
+    <string name="state_sending">正在发送到手机…</string>
+    <string name="heart_rate_fmt">%1$d 次/分</string>
+    <string name="heart_rate_unavailable">无法读取心率</string>
+    <string name="spo2_est_fmt">血氧 ≈ %1$.0f%%</string>
+    <string name="spo2_est_unavailable">无血氧估算值</string>
+    <string name="spo2_sleep_fmt">最近睡眠：%1$.0f%%</string>
+    <string name="spo2_hint">由原始光学传感器估算，非医疗设备；请在手机端校准。</string>
+    <string name="perm_missing">需要传感器权限。请在手表上打开应用并授权。</string>
+    <string name="channel_measure">检测</string>
+    <string name="notif_measuring">正在检测</string>
+    <string name="notif_done_title">检测完成</string>
 </resources>

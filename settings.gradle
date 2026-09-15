@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "SPo2Helper"
+rootProject.name = "Spo2Helper"
+include ':shared'
 include ':mobile'
 include ':wear'
