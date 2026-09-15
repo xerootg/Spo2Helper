@@ -38,12 +38,23 @@ The estimator is pure Kotlin with JVM unit tests (`wear/src/test`).
 ## Install
 
 Both APKs must be signed with the same key and share the application ID, otherwise the Wearable
-Data Layer will not deliver messages between them.
+Data Layer will not deliver messages between them. The phone APK carries the matching watch APK
+inside it, so you only need to get the phone APK onto the phone.
+
+**Option A: from the phone (no computer).** Install the phone APK, then on the watch enable
+Developer options (Settings › System › About › Versions, tap Build number 7 times) and turn on
+Wireless debugging with the watch on the same Wi-Fi as the phone. In the phone app's *Install the
+watch app from this phone* card: tap *Pair new device* on the watch, type the IP, pairing port and
+six-digit code it shows, tap *Pair*; then type the connect port from the Wireless debugging screen
+and tap *Install on watch*. Pairing is remembered, so later updates only need the connect port.
+This uses the same ADB protocol a computer would, spoken by the phone app.
+
+**Option B: with adb.**
 
 ```bash
-./gradlew assembleDebug
-adb -s <phone-serial> install mobile/build/outputs/apk/debug/mobile-debug.apk
-adb -s <watch-serial> install wear/build/outputs/apk/debug/wear-debug.apk
+./gradlew assembleRelease
+adb -s <phone-serial> install mobile/build/outputs/apk/release/mobile-release.apk
+adb -s <watch-serial> install wear/build/outputs/apk/release/wear-release.apk
 ```
 
 Requirements: phone on Android 14+, watch on Wear OS 5+ (Wear OS 6+ for on-watch Health Connect),
@@ -108,7 +119,8 @@ phone PhoneListenerService -> ReadingStore + notification -> MainActivity
 Modules:
 
 - `shared` — message paths, the `Reading` model, Health Connect reader, Data Layer wrapper.
-- `mobile` — phone app (Jetpack Compose, Material 3).
+- `mobile` — phone app (Jetpack Compose, Material 3); bundles the watch APK and can install it over
+  wireless debugging using [libadb-android](https://github.com/MuntashirAkon/libadb-android).
 - `wear` — watch app (Compose for Wear OS, raw PPG capture, SpO2 estimator, Health Services).
 
 ## Acknowledgements

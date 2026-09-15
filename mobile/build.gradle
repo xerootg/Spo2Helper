@@ -34,6 +34,26 @@ android {
     buildFeatures {
         compose true
     }
+    sourceSets {
+        debug.assets.srcDirs += layout.buildDirectory.dir("generated/wearApk/debug").get().asFile
+        release.assets.srcDirs += layout.buildDirectory.dir("generated/wearApk/release").get().asFile
+    }
+}
+
+// Bundle the watch APK of the same build type into the phone APK's assets so the
+// phone app can install it on the watch over wireless debugging.
+["debug", "release"].each { type ->
+    def cap = type.capitalize()
+    def copyTask = tasks.register("bundleWearApk${cap}", Copy) {
+        dependsOn(":wear:assemble${cap}")
+        from(rootProject.file("wear/build/outputs/apk/${type}")) { include "*.apk" }
+        into(layout.buildDirectory.dir("generated/wearApk/${type}"))
+        rename { "wear.apk" }
+    }
+    // Everything that reads the variant's assets (packaging and every lint task) must wait for the copy.
+    tasks.matching {
+        it.name.contains(cap) && (it.name.toLowerCase().contains("lint") || (it.name.startsWith("merge") && it.name.endsWith("Assets")))
+    }.configureEach { dependsOn(copyTask) }
 }
 
 apply from: rootProject.file('gradle/signing.gradle')
@@ -48,4 +68,8 @@ dependencies {
     implementation 'androidx.compose.foundation:foundation'
     implementation 'androidx.compose.material3:material3'
     debugImplementation 'androidx.compose.ui:ui-tooling-preview'
+    // ADB client used to install the bundled watch APK over wireless debugging.
+    implementation 'com.github.MuntashirAkon:libadb-android:3.1.1'
+    implementation 'com.github.MuntashirAkon:sun-security-android:1.1'
+    implementation 'org.conscrypt:conscrypt-android:2.5.3'
 }

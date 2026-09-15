@@ -2,3 +2,10 @@
 -optimizationpasses 12
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
+# libadb-android finds the TLS provider and Conscrypt helpers by reflection.
+-keep class org.conscrypt.** { *; }
+-dontwarn org.conscrypt.**
+-keep class io.github.muntashirakon.adb.** { *; }
+-keep class android.sun.** { *; }
+-dontwarn android.sun.**
+-dontwarn javax.naming.**

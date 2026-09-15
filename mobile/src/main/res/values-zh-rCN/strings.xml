@@ -47,4 +47,19 @@
     <string name="result_notif_title">来自手表的检测结果</string>
     <string name="result_hr_short_fmt">%1$d 次/分</string>
     <string name="result_spo2_short_fmt">血氧 ≈ %1$.0f%%</string>
+    <string name="install_title">从手机安装手表端应用</string>
+    <string name="install_hint">手表端：设置 › 系统 › 关于 › 版本，连点“版本号”7 次。然后 设置 › 开发者选项 › 无线调试（开启，与手机同一 Wi-Fi）。点“使用配对码配对设备”，把 IP、端口和配对码填到这里。连接端口显示在无线调试页面本身。</string>
+    <string name="install_bundled_fmt">内置手表 APK：%1$.1f MB</string>
+    <string name="install_missing">此版本未内置手表 APK。</string>
+    <string name="watch_ip">手表 IP</string>
+    <string name="pair_port">配对端口</string>
+    <string name="pair_code">配对码</string>
+    <string name="connect_port">连接端口</string>
+    <string name="pair_button">配对</string>
+    <string name="install_button">安装到手表</string>
+    <string name="pairing">正在配对…</string>
+    <string name="paired">已配对。请输入连接端口并点击“安装到手表”。</string>
+    <string name="installing_fmt">正在安装… %1$d%%</string>
+    <string name="install_done">已安装到手表。请在手表上打开血氧助手一次以授权。</string>
+    <string name="install_failed_fmt">失败：%1$s</string>
 </resources>

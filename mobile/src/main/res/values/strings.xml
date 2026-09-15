@@ -46,4 +46,19 @@
     <string name="result_notif_title">Spot check from watch</string>
     <string name="result_hr_short_fmt">%1$d bpm</string>
     <string name="result_spo2_short_fmt">SpO2 ≈ %1$.0f%%</string>
+    <string name="install_title">Install the watch app from this phone</string>
+    <string name="install_hint">On the watch: Settings › System › About › Versions, tap Build number 7 times. Then Settings › Developer options › Wireless debugging (on, same Wi-Fi as the phone). Tap "Pair new device" and copy its IP, port and code here. The connect port is shown on the Wireless debugging screen itself.</string>
+    <string name="install_bundled_fmt">Bundled watch APK: %1$.1f MB</string>
+    <string name="install_missing">No watch APK bundled in this build.</string>
+    <string name="watch_ip">Watch IP</string>
+    <string name="pair_port">Pairing port</string>
+    <string name="pair_code">Pairing code</string>
+    <string name="connect_port">Connect port</string>
+    <string name="pair_button">Pair</string>
+    <string name="install_button">Install on watch</string>
+    <string name="pairing">Pairing…</string>
+    <string name="paired">Paired. Now enter the connect port and tap Install.</string>
+    <string name="installing_fmt">Installing… %1$d%%</string>
+    <string name="install_done">Installed on the watch. Open Spo2 Helper on the watch once to grant permissions.</string>
+    <string name="install_failed_fmt">Failed: %1$s</string>
 </resources>

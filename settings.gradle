@@ -10,6 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // libadb-android and sun-security-android (watch installer)
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "Spo2Helper"

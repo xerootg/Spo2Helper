@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.TopAppBar
@@ -146,6 +147,8 @@ fun PhoneScreen() {
             ChannelsCard(latest)
 
             PhoneHealthConnectCard()
+
+            InstallCard()
 
             Text(stringResource(R.string.limitation), style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(16.dp))
@@ -278,6 +281,90 @@ private fun ChannelsCard(reading: Reading?) {
                     }
                 },
             ) { Text(stringResource(R.string.send_config)) }
+            if (status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun InstallCard() {
+    val context = LocalContext.current
+    val resources = LocalResources.current
+    val scope = rememberCoroutineScope()
+    val installer = remember { WatchInstaller(context) }
+    val bundledBytes = remember { installer.bundledApkSize() }
+    var host by remember { mutableStateOf("") }
+    var pairPort by remember { mutableStateOf("") }
+    var code by remember { mutableStateOf("") }
+    var connectPort by remember { mutableStateOf("") }
+    var status by remember { mutableStateOf("") }
+    var busy by remember { mutableStateOf(false) }
+    var progress by remember { mutableStateOf(-1) }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.install_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.install_hint), style = MaterialTheme.typography.bodySmall)
+            Text(
+                if (bundledBytes > 0) stringResource(R.string.install_bundled_fmt, bundledBytes / 1_000_000.0)
+                else stringResource(R.string.install_missing),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = host,
+                onValueChange = { host = it.filter { c -> c.isDigit() || c == '.' }.take(15) },
+                label = { Text(stringResource(R.string.watch_ip)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+                enabled = !busy,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                NumberField(pairPort, { pairPort = it }, stringResource(R.string.pair_port), Modifier.weight(1f))
+                NumberField(code, { code = it }, stringResource(R.string.pair_code), Modifier.weight(1f))
+                TextButton(
+                    enabled = !busy && host.isNotBlank() && pairPort.toIntOrNull() != null && code.length >= 6,
+                    onClick = {
+                        busy = true
+                        status = resources.getString(R.string.pairing)
+                        scope.launch {
+                            status = runCatching { installer.pair(host, pairPort.toInt(), code) }
+                                .fold({ resources.getString(R.string.paired) },
+                                    { resources.getString(R.string.install_failed_fmt, it.message ?: it.javaClass.simpleName) })
+                            busy = false
+                        }
+                    },
+                ) { Text(stringResource(R.string.pair_button)) }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                NumberField(connectPort, { connectPort = it }, stringResource(R.string.connect_port), Modifier.weight(1f))
+                Button(
+                    modifier = Modifier.weight(1f),
+                    enabled = !busy && bundledBytes > 0 && host.isNotBlank() && connectPort.toIntOrNull() != null,
+                    onClick = {
+                        busy = true
+                        progress = 0
+                        scope.launch {
+                            val result = runCatching {
+                                installer.install(host, connectPort.toInt()) { progress = it }
+                            }
+                            progress = -1
+                            status = result.fold(
+                                { reply ->
+                                    if (reply.contains("Success")) resources.getString(R.string.install_done)
+                                    else resources.getString(R.string.install_failed_fmt, reply)
+                                },
+                                { resources.getString(R.string.install_failed_fmt, it.message ?: it.javaClass.simpleName) },
+                            )
+                            busy = false
+                        }
+                    },
+                ) { Text(stringResource(R.string.install_button)) }
+            }
+            if (progress >= 0) {
+                LinearProgressIndicator(progress = { progress / 100f }, modifier = Modifier.fillMaxWidth())
+                Text(stringResource(R.string.installing_fmt, progress), style = MaterialTheme.typography.bodySmall)
+            }
             if (status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall)
         }
     }
