@@ -101,3 +101,8 @@ local.properties
 
 # Kotlin compiler session files
 .kotlin/
+
+# Signing keys never belong in the repo
+*.jks
+*.keystore
+signing.env
